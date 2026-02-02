@@ -24,13 +24,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
   const body = await request.json().catch(() => null);
   if (!body) {
-    return NextResponse.json({ error: "Invalid JSON payload." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid JSON payload." },
+      { status: 400 },
+    );
   }
   const validation = validateEventPayload(body, "update");
   if (!validation.valid) {
     return NextResponse.json(
       { error: "Validation failed.", details: validation.errors },
-      { status: 400 }
+      { status: 400 },
     );
   }
   const { id, createdAt, ...patch } = body;

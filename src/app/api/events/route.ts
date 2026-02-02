@@ -21,18 +21,23 @@ const parseFilters = (request: NextRequest) => {
   const page = params.get("page");
   const pageSize = params.get("pageSize");
 
+  const minScoreValue = minScore ? Number(minScore) : undefined;
+  const lastDaysValue = lastDays ? Number(lastDays) : undefined;
+  const pageValue = page ? Number(page) : undefined;
+  const pageSizeValue = pageSize ? Number(pageSize) : undefined;
+
   return {
     categories,
     severities,
-    minScore: minScore ? Number(minScore) : undefined,
+    minScore: Number.isNaN(minScoreValue) ? undefined : minScoreValue,
     q,
-    lastDays: lastDays ? Number(lastDays) : undefined,
+    lastDays: Number.isNaN(lastDaysValue) ? undefined : lastDaysValue,
     from: from ? new Date(from) : undefined,
     to: to ? new Date(to) : undefined,
     sort: sort ?? undefined,
     order: order ?? undefined,
-    page: page ? Number(page) : undefined,
-    pageSize: pageSize ? Number(pageSize) : undefined,
+    page: Number.isNaN(pageValue) ? undefined : pageValue,
+    pageSize: Number.isNaN(pageSizeValue) ? undefined : pageSizeValue,
   };
 };
 
