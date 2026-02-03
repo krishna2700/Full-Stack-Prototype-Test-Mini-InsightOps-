@@ -1,7 +1,7 @@
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import Map, { Marker } from "react-map-gl";
+import Map, { Marker } from "react-map-gl/maplibre";
 import maplibregl from "maplibre-gl";
 import type { InsightEvent } from "@/lib/types";
 
@@ -35,10 +35,10 @@ export const InsightMap = ({ events, selectedId, onSelect }: Props) => {
                 selectedId === event.id
                   ? "border-white bg-amber-300"
                   : event.severity === "High"
-                  ? "border-rose-200 bg-rose-500"
-                  : event.severity === "Medium"
-                  ? "border-amber-200 bg-amber-400"
-                  : "border-emerald-200 bg-emerald-400"
+                    ? "border-rose-200 bg-rose-500"
+                    : event.severity === "Medium"
+                      ? "border-amber-200 bg-amber-400"
+                      : "border-emerald-200 bg-emerald-400"
               }`}
             />
           </Marker>
