@@ -3,11 +3,12 @@ import { authService } from "@/lib/auth";
 import { dataStore } from "@/lib/data";
 import type { Role } from "@/lib/types";
 
-type RouteParams = { params: { id: string } };
+type RouteParams = { params: Promise<{ id: string }> };
 
 const roles: Role[] = ["admin", "analyst", "viewer"];
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   const user = authService.getUserFromRequest(request);
   if (!authService.requireRole(user, ["admin"])) {
     return NextResponse.json({ error: "Forbidden." }, { status: 403 });
@@ -19,7 +20,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       { status: 400 }
     );
   }
-  const updated = dataStore.updateUserRole(params.id, body.role);
+  const updated = dataStore.updateUserRole(id, body.role);
   if (!updated) {
     return NextResponse.json({ error: "User not found." }, { status: 404 });
   }

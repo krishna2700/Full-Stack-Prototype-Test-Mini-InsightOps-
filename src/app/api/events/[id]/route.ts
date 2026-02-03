@@ -3,14 +3,15 @@ import { authService } from "@/lib/auth";
 import { dataStore } from "@/lib/data";
 import { validateEventPayload } from "@/lib/validation";
 
-type RouteParams = { params: { id: string } };
+type RouteParams = { params: Promise<{ id: string }> };
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   const user = authService.getUserFromRequest(request);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
-  const event = dataStore.getEvent(params.id);
+  const event = dataStore.getEvent(id);
   if (!event) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
@@ -18,6 +19,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   const user = authService.getUserFromRequest(request);
   if (!authService.requireRole(user, ["admin", "analyst"])) {
     return NextResponse.json({ error: "Forbidden." }, { status: 403 });
@@ -36,8 +38,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       { status: 400 },
     );
   }
-  const { id, createdAt, ...patch } = body;
-  const updated = dataStore.updateEvent(params.id, patch);
+  const { id: _ignoredId, createdAt, ...patch } = body;
+  const updated = dataStore.updateEvent(id, patch);
   if (!updated) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
@@ -45,11 +47,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const { id } = await params;
   const user = authService.getUserFromRequest(request);
   if (!authService.requireRole(user, ["admin"])) {
     return NextResponse.json({ error: "Forbidden." }, { status: 403 });
   }
-  const deleted = dataStore.deleteEvent(params.id);
+  const deleted = dataStore.deleteEvent(id);
   if (!deleted) {
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }

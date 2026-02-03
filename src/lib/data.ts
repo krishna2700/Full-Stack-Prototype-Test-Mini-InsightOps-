@@ -18,9 +18,9 @@ type EventFilters = {
 const daysAgo = (days: number) =>
   new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-const baseEvents: Omit<InsightEvent, "id" | "createdAt">[] & {
-  createdAt?: string;
-}[] = [
+type SeedEventInput = Omit<InsightEvent, "id"> & { createdAt?: string };
+
+const baseEvents: SeedEventInput[] = [
   {
     title: "Card-Not-Present Spike",
     description:
@@ -429,11 +429,14 @@ const users: User[] = [
   },
 ];
 
-const seedEvents = baseEvents.map((event) => ({
-  id: randomUUID(),
-  createdAt: event.createdAt ?? daysAgo(14),
-  ...event,
-}));
+const seedEvents = baseEvents.map((event) => {
+  const { createdAt, ...rest } = event;
+  return {
+    id: randomUUID(),
+    createdAt: createdAt ?? daysAgo(14),
+    ...rest,
+  };
+});
 
 let events: InsightEvent[] = [...seedEvents];
 
