@@ -1,5 +1,7 @@
 # Mini InsightOps
 
+Live demo: https://full-stack-prototype-eta.vercel.app
+
 Prototype console for exploring AI-driven insight events across map, dashboard, and table views with RBAC enforced on the API.
 
 ## Setup
